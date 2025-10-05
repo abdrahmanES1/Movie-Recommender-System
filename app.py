@@ -34,13 +34,13 @@ def get_recommendations(genres: list, k=6):
 
 # ---------------- STREAMLIT UI ---------------- #
 
-st.set_page_config(page_title="🎬 Movie Recommender", layout="wide")
+st.set_page_config(page_title="Movie Recommender", layout="wide")
 
-st.title("🎥 Movie Recommender System")
+st.title("Movie Recommender System")
 st.write("Find movies you’ll love – based on **genre** or a **movie you watched**.")
 
 # Sidebar settings
-st.sidebar.header("⚙️ Settings")
+st.sidebar.header("Settings")
 rec_type = st.sidebar.radio("Recommendation Type", ["By Genre", "By Movie Watched"])
 num_recs = st.sidebar.slider("Number of Recommendations", min_value=3, max_value=15, value=6, step=1)
 
@@ -74,21 +74,21 @@ st.markdown("""
 def show_movie_card(movie):
     st.markdown(f"""
         <div class="movie-card">
-            <div class="movie-title">🎬 {movie['movie_title']}</div>
-            <div class="movie-info">📅 Year: {int(movie.get('title_year'))if movie.get('title_year') else 'N/A'} | 🌐 Language: {movie.get('language', 'N/A')} | 🌍 Country: {movie.get('country', 'N/A')}</div>
-            <div class="movie-info">🎭 Genres: {', '.join(movie['genres'])}</div>
-            <div class="movie-info">🎬 Director: {movie.get('director_name', 'N/A')}</div>
-            <div class="movie-info">⏱️ Duration: {movie.get('duration', 'N/A')} min</div>
-            <div class="movie-info">⭐ IMDb Score: {movie.get('imdb_score', 'N/A')}</div>
-            <div class="movie-info">📊 Similarity: {movie.get('similarity', 0)}%</div>
-            <div class="movie-link">🔗 <a href="{movie.get('movie_imdb_link', '#')}" target="_blank">View on IMDb</a></div>
+            <div class="movie-title">{movie['movie_title']}</div>
+            <div class="movie-info">Year: {int(movie.get('title_year'))if movie.get('title_year') else 'N/A'} | Language: {movie.get('language', 'N/A')} | Country: {movie.get('country', 'N/A')}</div>
+            <div class="movie-info">Genres: {', '.join(movie['genres'])}</div>
+            <div class="movie-info">Director: {movie.get('director_name', 'N/A')}</div>
+            <div class="movie-info">Duration: {movie.get('duration', 'N/A')} min</div>
+            <div class="movie-info">IMDb Score: {movie.get('imdb_score', 'N/A')}</div>
+            <div class="movie-info">Similarity: {movie.get('similarity', 0)}%</div>
+            <div class="movie-link"><a href="{movie.get('movie_imdb_link', '#')}" target="_blank">View on IMDb</a></div>
         </div>
     """, unsafe_allow_html=True)
 
 # 🔹 Recommendation by Genre
 if rec_type == "By Genre":
     all_genres = sorted(set(g for genres in movies_df['genres'] for g in genres))
-    chosen_genres = st.multiselect("🎭 Choose genres", all_genres)
+    chosen_genres = st.multiselect("Choose genres", all_genres)
     print(chosen_genres, num_recs)
 
     if st.button("Recommend Movies"):
@@ -99,7 +99,7 @@ if rec_type == "By Genre":
                     st.warning("Please select another genre to get more results.")
 
                 recs = get_recommendations(chosen_genres, k=num_recs)
-                st.subheader(f"🎯 Top {num_recs} recommendations for {', '.join(chosen_genres)}:")
+                st.subheader(f"Top {num_recs} recommendations for {', '.join(chosen_genres)}:")
 
                 for movie in recs:
                     show_movie_card(movie)
@@ -110,14 +110,14 @@ if rec_type == "By Genre":
 
 # 🔹 Recommendation by Movie
 else:
-    movie_choice = st.selectbox("🎞️ Pick a movie you watched", movies_df["movie_title"].tolist())
+    movie_choice = st.selectbox("Pick a movie you watched", movies_df["movie_title"].tolist())
 
     if st.button("Recommend Similar Movies"):
         # Get genres of the chosen movie
         chosen_genres = movies_df[movies_df["movie_title"] == movie_choice]["genres"].iloc[0]
         recs = get_recommendations(chosen_genres, k=num_recs+1)
 
-        st.subheader(f"🎯 Top {num_recs} recommendations similar to **{movie_choice}**:")
+        st.subheader(f"Top {num_recs} recommendations similar to **{movie_choice}**:")
 
         for movie in recs:
             show_movie_card(movie)
